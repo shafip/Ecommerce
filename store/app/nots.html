@@ -1,0 +1,328 @@
+{% extends 'login_user.html' %}
+{% load static %}
+{% block content %}
+<style>
+.card-img-top {
+  height: 200px;
+  max-width: 100%;
+}
+.card-body {
+  padding: 10px;
+}
+.card-title,
+.card-text {
+  text-align: center;
+}
+.carousel {
+  background-color: #fff;
+}
+#carouselExampleCaptions {
+  background-color: #fff;
+}
+
+</style>
+<div align="right">
+
+</div>
+
+<div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+  {% if banner %}
+  {% for item in banner %}
+    {% if item.product.banner %}
+      <div class="carousel-item active p-5" data-bs-interval="5000">
+        <a href="{% url 'product-detail' pk=item.id %}"><img src="{{ item.product.banner.url }}" class="d-block w-100" alt="..."></a>
+
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+<div class="row">
+  <div class="col-2 ">
+    <div class="p-1">
+<form method="get" id="productFilterForm">
+  {{ form.name }}
+  <br>
+
+</form>
+    </div>
+
+
+  </div>
+  <div class="col-9">
+<div id="productListContainer">
+  <!-- Filtered products will be dynamically updated here -->
+</div>
+
+    <div class="container mt-5">
+  <div class="row justify-content-center">
+{% for item in products %}
+  {% if item.is_active == True %}
+    <div class="col-lg-3 h-100  col-md-4 col-sm-6 mb-4">
+      <div class="card h-10">
+
+<form id="product-form" method="post" action="">
+    {% csrf_token %}
+    <img src="{{ item.product.image.url }}" class="card-img-top p-2" alt="" onclick="submitForm('{{ item.id }}')">
+
+</form>
+
+        <div class="card-body" id="">
+          <h5 class="card-title text-center">{{item.product}}</h5>
+          <p class="card-text text-center">Quantity: {{item.quantity}} Kg</p>
+          <p class="card-text text-center">Brand: {{item.brand}}</p>
+          <h6 class="card-subtitle mb-2 text-muted text-center">RS {{item.price}}</h6>
+        </div>
+        {% if item.stock < 1 %}
+        <div class="card-footer">
+            <p1>Out of stock</p1>
+        </div>
+        {% else %}
+
+        <div class="d-grid p-2 gap-2">
+  <button class="btn btn-primary btn-sm add-to-wishlist-btn" data-product-id="{{ item.id }}">WishList</button>
+
+  <button class="btn btn-primary btn-sm add-to-cart-btn" data-product-id="{{ item.id }}">Add Cart</button>
+
+  <a href="{% url 'direct_buy' item.id  %}" class="btn btn-success btn-sm">Buy now</a>
+</div>
+
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}
+</div>
+</div>
+  </div>
+  <div class="col-2">
+
+  </div>
+</div>
+
+
+<h3 style="text-align: center;">Recently View</h3>
+
+<div class="row p-3">
+    <div class="row p-5">
+  {% for product_id, product_data in recsentview.items %}
+    <div class="card p-2" style="width: 12rem;">
+        <a href=""><img src="{{ product_data.image_url }}" class="card-img-top" alt="..."></a>
+      <div class="card-body">
+        <h5 class="card-title">Name: {{ product_data.brand }}</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Name: {{ product_data.name }}</li>
+        <li class="list-group-item">Rs: {{ product_data.price }}</li>
+        <li class="list-group-item">Quantity: {{ product_data.quantity }}</li>
+
+      </ul>
+    </div>
+  {% endfor %}
+</div>
+</div>
+
+
+
+
+{% endblock %}
+{% block scriptcontent %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script>
+    function submitForm(id) {
+        document.getElementById('product-form').action = "/product/detail/" + id + "/";
+        document.getElementById('product-form').submit();
+    }
+</script>
+<script>
+  $(document).ready(function() {
+
+  $(".add-to-cart-btn").on("click", function() {
+    // Get the product_id from the button data attribute
+    var product_id = $(this).data("product-id");
+
+    // Make a POST request to the add_to_cart view
+    $.ajax({
+      type: "POST",
+      url: "/add_to_cart/" + product_id + "/",
+      dataType: "json",
+      success: function(data) {
+        // Update the UI with the success message
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Product Added',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        // Handle any errors that may occur during the AJAX request
+        console.log("Error: " + errorThrown);
+      }
+    }).done(function(data) {
+        if (data.success === false) {
+          // Update the UI with the failure message
+          Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: 'Sorry Out Of Stock',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+    });
+  });
+});
+
+</script>
+<script>
+$(document).ready(function() {
+
+  $(".add-to-wishlist-btn").on("click", function() {
+    // Get the product_id from the button data attribute
+    var product_id = $(this).data("product-id");
+
+    // Make a POST request to the add_to_cart view
+    $.ajax({
+      type: "POST",
+      url: "/add-to-wishlist/" + product_id + "/",
+      dataType: "json",
+      success: function(data) {
+        if (data.success) {
+          // Update the UI with the success message
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Product Added',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        } else {
+          // Update the UI with the failure message
+          Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            title: 'Product Already Added to Wishlist',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        // Handle any errors that may occur during the AJAX request
+        console.log("Error: " + errorThrown);
+      }
+    });
+  });
+});
+
+</script>
+<script>
+  $(document).ready(function() {
+
+    $('#id_name').change(function() {
+
+      $('#productFilterForm').submit();
+    });
+
+    $('#productFilterForm').submit(function(event) {
+      event.preventDefault();
+
+      var form = $(this);
+      var url = form.attr('action');
+      var formData = form.serialize();
+      var productList = $('#product-list');
+
+      $.ajax({
+        type: 'GET',
+        url: url,
+        data: formData,
+        success: function(response) {
+          // Update the productListContainer with the filtered products
+
+          $('#productListContainer').html(response);
+        },
+        error: function(xhr, textStatus, error) {
+          console.log(error);
+        }
+      });
+    });
+  });
+</script>
+<!--<script>-->
+<!--  $(document).ready(function() {-->
+<!--    $('#id_name').change(function() {-->
+<!--      $('#productFilterForm').submit();-->
+<!--    });-->
+
+<!--    $('#productFilterForm').submit(function(event) {-->
+<!--      event.preventDefault();-->
+
+<!--      var form = $(this);-->
+<!--      var url = form.attr('action');-->
+<!--      var formData = form.serialize();-->
+
+<!--      $.ajax({-->
+<!--        type: 'GET',-->
+<!--        url: url,-->
+<!--        data: formData,-->
+<!--        dataType: 'json',-->
+<!--        success: function(response) {-->
+<!--          var productList = response.products;-->
+<!--          var productListHTML = '';-->
+
+<!--          for (var i = 0; i < productList.length; i++) {-->
+<!--            productListHTML += '<div>' + productList[i].name + '</div>';-->
+<!--          }-->
+
+<!--          $('#productListContainer').html(productListHTML);-->
+<!--        },-->
+<!--        error: function(xhr, textStatus, error) {-->
+<!--          console.log(error);-->
+<!--        }-->
+<!--      });-->
+<!--    });-->
+<!--  });-->
+<!--</script>-->
+{% endblock scriptcontent %}
+
+
+def product_list(request):
+    products = Varient.objects.filter(is_active=True)
+    product = Product.objects.filter(is_active=True)
+    product_detail = request.session.get('product_detail', {})
+    print(product_detail)
+
+
+    if request.method == 'GET':
+        form = ProductFilterForm(request.GET)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            if name:
+                products = products.filter(product__name__icontains=name)
+
+            if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+                # Return the filtered products as a partial HTML response for AJAX requests
+                return render(request, 'product_list_partial.html', {'products': products})
+
+    context = {
+        'products': products,
+        'form': form,
+        'banner': products,
+        'recsentview':product_detail
+    }
+    return render(request, 'logeduserview.html', context)

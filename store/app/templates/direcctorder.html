@@ -1,0 +1,76 @@
+{% extends 'login_user.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+	<div class="col-1"></div>
+	<div class="col-10">
+
+		<div class="row mt-5 l-3 ">
+    <div class="col-lg-4">
+		<h6>Delivery Address</h6>
+        <div class="box-element mt-5" id="form-wrapper">
+			<!-- Default radio -->
+			<form action="" method="post">
+  {% csrf_token %}
+  {% for item in user_shippings %}
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="address_id" id="optionsRadios1" value="{{item.id}}"/>
+      <label class="form-check-label" for="optionsRadios1">{{ item.name }}</label>
+      <ul>
+        <li>{{ item.address }}</li>
+        <li>{{ item.pincode }}</li>
+        <li>{{ item.phone }}</li>
+      </ul>
+    </div>
+  {% endfor %}
+  {% if user_shippings %}
+    <button class="btn btn-success" type="submit" value="submit">Submit</button>
+  {% endif %}
+</form>
+
+{% if product_items %}
+        </div>
+
+		<h6 class="mt-5"><a href="{% url 'dirctfrm' product_id=product_items.id %}">Add New</a></h6>
+        <br>
+ {% endif %}
+
+		<div class="box-element hidden" id="payment-info">
+			<small>Paypal Options</small>
+			<button id="make-payment">Make payment</button>
+		</div>
+    </div>
+    <div class="col-lg-6">
+        <div class="box-element">
+				<a  class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+				<hr>
+				<h3>Order Summary</h3>
+				<hr>
+			{% if product_items %}
+				<div class="cart-row">
+					<div style="flex:2"><img class="row-image" src="{{product_items.product.image.url}}"></div>
+					<div style="flex:2"><p>{{product_items.product.name}}</p></div>
+					<div style="flex:1"><p>RS {{product_items.price|floatformat:2}}</p></div>
+					<div style="flex:1"><p> x {{product_items.quantity}}</p></div>
+					<div style="flex:1"><p>RS {{product_items.get_total}}</p></div>
+				</div>
+
+
+			<h5> Items: 1 </h5>
+			<h5>Total:RS  {{product_items.price}}</h5>
+			{% endif %}
+
+			</div>
+
+
+</div>
+
+</div>
+	</div>
+	<div class="col-1"></div>
+</div>
+
+
+
+{% endblock content %}

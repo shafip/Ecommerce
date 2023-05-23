@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row" xmlns="http://www.w3.org/1999/html">
+    <div class="col-lg-12">
+        <div class="box-element">
+            <a class="btn btn-outline-dark" href="{% url 'login_user' %}">&#x2190; continue shopping</a>
+            <br>
+            <br>
+            <table class="table">
+                <tr>
+                    <th><h5>items: <strong>{{total_quantity}}</strong></h5></th>
+                    <th><h5>total: RS {{total_amount}}<strong></strong></h5></th>
+
+                    <th>
+                        <a style="float:right;margin:5px;" class="btn btn-outline-success btn-sm" href="{% url 'check_out' %}">checkout</a>
+                    </th>
+
+
+                </tr>
+            </table>
+        </div>
+        <br>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mx-auto" role="alert" style="width: 25%;">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+                <div class="box-element">
+                    <div class="cart-row">
+                        <div style="flex:2">Item</div>
+                        <div style="flex:2">Name</div>
+                        <div style="flex:2">Brand</div>
+                        <div style="flex:1">Price</div>
+                        <div style="flex:1">Quantity</div>
+                        <div style="flex:1">Total</div>
+                        <div style="flex:1">Action</div>
+                    </div>
+                    {% if is_empty %}
+                        <h1 align="center">Your cart is empty.</h1>
+                    {% else %}
+          {% if cart %}
+    {% for product_id, product_data in cart.items %}
+        <div id="cart-item-{{ product_data.id }}" class="cart-row">
+            <div style="flex: 2"><a href=""><img class="row-image" src="{{ product_data.image_url }}" alt=""></a></div>
+            <div style="flex: 2">{{ product_data.name }} ({{ product_data.quantity }} kg)</div>
+            <div style="flex: 2">{{ product_data.brand }}</div>
+            <div style="flex: 1">Rs : {{ product_data.price }}</div>
+            <div style="flex: 1">
+                <p id="quantity-{{ product_data.id }}" class="quantity">{{ product_data.quantity }}</p>
+                <div class="quantity">
+                    <a href="{% url 'cart_guest_update' pk=product_data.product_id action='increment' %}" class="update-cart" data-product-id=""><img class="chg-quantity" src="{% static 'images/arrow-up.png' %}"></a>
+                    <a href="{% url 'cart_guest_update' pk=product_data.product_id action='decrement' %}" class="update-cart" data-product-id=""><img class="chg-quantity" src="{% static 'images/arrow-down.png' %}"></a>
+                </div>
+            </div>
+            <div style="flex: 1">RS :{{product_data.price}} </div>
+
+
+<form method="POST" action="{% url 'delete_product' product_id=product_id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Delete</button>
+</form>
+
+            </div>
+ {% endfor %}
+
+                    {% endif %}
+                    {% endif %}
+
+        </div>
+
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+
+
+
+    </div>
+</div>
+
+{% endblock content %}
+{% block scriptcontent %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+<script>
+$(document).ready(function(Id) {
+
+    $('#delete-btn').on('click', function() {
+        var cartId = $(this).data('cart-id');
+        $.ajax({
+            url: '/cart/delete/' + cartId + '/',
+            type: 'POST',
+            dataType: 'json',
+            success: function(data) {
+                alert(data)
+                $('#cart-item-' + data).remove();
+
+                if (data.success) {
+                    // Delete item from view without reload
+                    // e.g. remove the cart item element from DOM
+
+                } else {
+                    // Show error message
+                    alert('Error: ' + data.error);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error: ' + error);
+            }
+        });
+    });
+});
+</script>
+<script>
+    // Attach click event handlers to the increment and decrement buttons
+    $('.cart-action').on('click', function() {
+        var pk = $(this).data('pk');  // Get the 'pk' from the data attribute
+        var action = $(this).data('action');  // Get the 'action' from the data attribute
+
+        // Call the updateCart function with the 'pk' and 'action' parameters
+        updateCart(pk, action);
+    });
+
+    function updateCart(pk, action) {
+        // Make an AJAX call to the cart_updates view
+        $.ajax({
+            url: '/productcart/updates/' + pk + '/' + action + '/',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log('test');
+                // Update the quantity value of the corresponding <p> element
+                $('#quantity-' + pk).text(data.quantity);
+            }
+        });
+    }
+</script>
+
+
+{% endblock scriptcontent %}

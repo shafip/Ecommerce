@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Confirmation</title>
+</head>
+<body>
+    <h1>Order Created</h1>
+    <p>{{ message }}</p>
+    {% for item in order %}
+    <img src="{{item.id}}" alt="Order Image">
+
+    {% endfor %}
+    <!-- Additional order details can be included here -->
+</body>
+</html>

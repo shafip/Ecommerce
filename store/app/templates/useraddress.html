@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="row mt-5">
+    <div class="col-2"></div>
+    <div class="col-6">    <h3>Shipping addresses</h3>
+        <br>
+        <br>
+
+{% for address in shipping_addresses %}
+
+
+
+<div class="card" style="width: 18rem;">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Name : {{address.name}}</li>
+    <li class="list-group-item">Email : {{ address.email }}</li>
+    <li class="list-group-item">PinCode : {{ address.pincode }}</li>
+      <li class="list-group-item">Phone : {{ address.phone }}</li>
+            <li class="list-group-item">Address : {{ address.address }}</li>
+      <li class="list-group-item">Shipped on : {{ address.date }}</li>
+
+  </ul>
+</div></div>
+    <div class="col-6"></div>
+</div>
+{% empty %}
+    <li>No shipping addresses found for {{ user.username }}</li>
+
+{% endfor %}
+
+{% endblock%}

@@ -1,0 +1,150 @@
+{% extends 'login_user.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+	<div class="col-1"></div>
+	<div class="col-10">
+
+		<div class="row mt-5 l-3 ">
+    <div class="col-lg-4">
+		<h6>Delivery Address</h6>
+        <div class="box-element mt-5" id="form-wrapper">
+			<!-- Default radio -->
+		<form method="POST">
+    {% csrf_token %}
+
+    <div id="user-info">
+        <div class="form-field" aria-placeholder="Name">
+            {{ form.name }}
+            {% if form.name.errors %}
+                <ul class="errorlist">
+                    {% for error in form.name.errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="form-field">
+            {{ form.phone }}
+            {% if form.phone.errors %}
+                <ul class="errorlist">
+                    {% for error in form.phone.errors %}
+                        <div class="alert alert-danger">
+                        {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+
+    </div>
+
+    <div id="shipping-info">
+        <hr>
+        <p>Shipping Information:</p>
+        <hr>
+
+        <div class="form-field">
+            {{ form.address }}
+            {% if form.address.errors %}
+                <ul class="errorlist">
+                    {% for error in form.address.errors %}
+                        <div class="alert alert-danger">
+                        {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="form-field">
+            {{ form.city }}
+            {% if form.city.errors %}
+                <ul class="errorlist">
+                    {% for error in form.city.errors %}
+                        <div class="alert alert-danger">
+                        {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-field">
+            {{ form.pincode }}
+            {% if form.pincode.errors %}
+                <ul class="errorlist">
+                    {% for error in form.pincode.errors %}
+                        <div class="alert alert-danger">
+                        {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="form-field">
+            defualt address
+
+            {{ form.is_defualt }}
+
+        </div>
+
+
+    </div>
+
+    <hr>
+    <input class="btn btn-success btn-block" type="submit" value="submit">
+</form>
+
+
+
+
+        </div>
+
+        <br>
+
+		<div class="box-element hidden" id="payment-info">
+			<small>Paypal Options</small>
+			<button id="make-payment">Make payment</button>
+		</div>
+    </div>
+    <div class="col-lg-6">
+        <div class="box-element">
+				<a  class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+				<hr>
+				<h3>Order Summary</h3>
+				<hr>
+			{% for item in cart_items %}
+				<div class="cart-row">
+					<div style="flex:2"><img class="row-image" src="{{item.varient.image.url}}"></div>
+					<div style="flex:2"><p>{{item.varient.product.name}}</p></div>
+					<div style="flex:1"><p>RS {{item.varient.price|floatformat:2}}</p></div>
+					<div style="flex:1"><p> x {{item.quantity}}</p></div>
+					<div style="flex:1"><p>RS {{item.get_total}}</p></div>
+				</div>
+			{% endfor %}
+
+			<h5>Items:{{total_quantity}}</h5>
+			<h5>Total:RS  {{total}}</h5>
+
+			</div>
+
+
+</div>
+
+</div>
+	</div>
+	<div class="col-1"></div>
+</div>
+
+
+
+{% endblock content %}

@@ -1,0 +1,222 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- your other scripts -->
+</head>
+<style>
+    .card-img-top{
+        width:100px;
+        }
+</style>
+<div class="row mt-5">
+    <div class="col-2"></div>
+    <div class="col-8">
+
+        <h4>Product View</h4>
+
+        <table class="table">
+  <thead>
+
+    <tr>
+
+      <th scope="col">Product ID</th>
+
+      <th scope="col">Name</th>
+        <th scope="col" colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action</th>
+
+        <th><a href="{% url 'product-add' %}"><button scope="col" type="button" class="btn btn-success btn-sm">Add Product</button></a></th>
+    </tr>
+  {% for item in product %}
+  </thead>
+  <tbody>
+    <tr id="user-{{ item.id }}">
+        <td>{{ forloop.counter|add:"+999" }}</td>
+
+      <td class="userName userData">{{item.name}}</td>
+
+        <td>
+            {% if item.is_active == True %}
+            Enable
+            {% else %}
+            Disable
+            {% endif %}
+
+        </td>
+
+
+<!--        <td><a href="{% url 'productupdate' item.id %}"><button scope="col" type="button" class="btn btn-warning btn-sm ">Edti</button></a></td>-->
+<td>
+  <button type="button" class="btn btn-warning btn-sm" onClick="editUser({{item.id}})" data-toggle="modal" data-target="#myModal">Edit</button>
+</td>
+        {% if item.is_active == False %}
+        <td><a href="{% url 'productenable' item.id %}"><button type="button" class="btn btn-info btn-sm">ENABLE</button></a></td>
+     {% else %}
+        <td> <button type="button" onclick="btnok('{{item.id}}')" class="btn btn-info">Disable</button></td>
+      {% endif %}
+
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+    </div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">Update Product Name</h4>
+        </div>
+        <form id="updateUser" action="">
+              {% csrf_token %}
+        <div class="modal-body">
+            <input class="form-control" id="form-id" type="hidden" name="formId"/>
+            <label for="form-name">Name</label>
+            <input class="form-control" id="form-name" type="text" name="formName"/>
+
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" >Save changes</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+    <div class="col-2"></div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js">
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+<script>
+    function btnok(id){
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then(function(e){
+    if (e.value === true) {
+      const data = { userid: id };
+      $.ajax({
+
+        success: function(response){
+          Swal.fire({
+            icon: 'success',
+            title: response.msg,
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error: function(response){
+          Swal.fire({
+            icon: 'error',
+            title: response.msg,
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      });
+    }
+  });
+}
+</script>
+
+<script>
+
+  function submitForm() {
+    // Retrieve the value of the 'name' field
+    var nameValue = document.getElementById('name').value;
+
+    // Perform further operations with the value as needed
+    console.log(nameValue);
+
+    // Close the modal (optional)
+    $('#myModal').modal('hide');
+  }
+
+</script>
+<script>
+    // Create Django Ajax Call
+
+
+// Update Django Ajax Call
+function editUser(id) {
+  if (id) {
+
+    tr_id = "#user-" + id;
+
+    name = $(tr_id).find(".userName").text();
+
+
+    $('#form-id').val(id);
+    $('#form-name').val(name);
+
+  }
+}
+function updateToUserTabel(user){
+    $("#userTable #user-" + user.id).children(".userData").each(function() {
+        var attr = $(this).attr("name");
+        if (attr == "name") {
+          $(this).text(user.name);
+        }
+      });
+}
+</script>
+{% endblock content %}
+
+
+
+{% block scriptcontent %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+<script>
+$(document).ready(function() {
+  $('#updateUser').on('submit', function(event) {
+    event.preventDefault();
+
+    // Retrieve form data
+    var formId = $('#form-id').val();
+    var formName = $('#form-name').val();
+
+    // Get the CSRF token from the DOM
+    var csrftoken = $('[name=csrfmiddlewaretoken]').val();
+
+    // Send AJAX request with CSRF token
+    $.ajax({
+      type: 'POST',
+      url: '/update_products/',
+      data: {
+        'formId': formId,
+        'formName': formName,
+        'csrfmiddlewaretoken': csrftoken
+      },
+      success: function(response) {
+            location.reload();
+
+
+      },
+      error: function(xhr) {
+        // Handle error response
+        console.log("error");
+        // Show error message or perform error handling
+      }
+    });
+  });
+});
+</script>
+{% endblock scriptcontent %}

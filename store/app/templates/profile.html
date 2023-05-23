@@ -1,0 +1,80 @@
+{% extends 'login_user.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="row mt-5">
+  <div class="col-4"></div>
+  <div class="col-4">
+    <div style="text-align: center;">
+
+      {% if user_profile %}
+
+          <div class="card" style="width: 18rem;">
+           {% if user_profile.image %}
+              <img id="profile-image" src="{{ user_profile.image.url }}" alt="Profile image">
+
+{% else %}
+              <img src="{% static 'images/285645_user_icon_ULYRUCF.png' %}" alt="">
+              <a href="{% url 'edit_profile' %}">change photo</a>
+{% endif %}
+
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Name: {{ user_profile.name }}</li>
+              <li class="list-group-item">Email: {{ user_profile.email }}</li>
+              <li class="list-group-item">Phone: {{ user_profile.phone_number }}</li>
+            </ul>
+
+            <div class="card-body">
+              <a href="{% url 'edit_profile' %}" class="card-link">Edit Profile</a>
+            </div>
+
+            <div class="card-body">
+              <a href="{% url 'password_change' %}" class="card-link">Change Password</a>
+            </div>
+
+            <div class="card-body">
+              <a href="{% url 'delete_user' user.id %}">Delete Account</a>
+            </div>
+          </div>
+
+      {% else %}
+        <p>No profile found.</p>
+        <a href="{% url 'userproduct' %}" class="card-link">Go Back</a>
+        <a href="{% url 'chpswd' %}" class="card-link p-5">Create Profile</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-4"></div>
+</div>
+<script>
+const profileImage = document.getElementById('profile-image');
+
+profileImage.addEventListener('click', (event) => {
+  event.preventDefault();
+
+  const url = '/edit-profile/'  // Replace with your desired URL
+
+  fetch(url)
+    .then(response => response.text())
+    .then(data => {
+      const parser = new DOMParser();
+      const htmlDocument = parser.parseFromString(data, 'text/html');
+      const newContent = htmlDocument.querySelector('body').innerHTML;
+      document.body.innerHTML = newContent;
+      history.pushState(null, null, url);
+    })
+    .catch(error => {
+      console.error(error);
+      // Handle any errors that occur during the fetch
+    });
+});
+</script>
+
+
+
+
+
+
+
+{% endblock %}

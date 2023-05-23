@@ -1,0 +1,74 @@
+{% extends 'mainhome.html' %}
+
+{% load static %}
+{% load widget_tweaks %} <!-- Load the widget_tweaks tag library -->
+<style>
+    #eye-icon {
+  width: 20px; /* Adjust width as needed */
+  height: 20px; /* Adjust height as needed */
+}
+</style>
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">Login</h1>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors|join:", " }}</div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        {{ form.username.label_tag }}
+                        {{ form.username }}
+
+                        {% if form.username.errors %}
+                        <div class="invalid-feedback">{{ form.username.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3 position-relative">
+                        {{ form.password.label_tag }}
+                        {{ form.password }}
+                        <label for="box" class="eye-icon">
+  <img src="{% static 'images/view.png' %}" id="eye-icon" >
+
+<input type="checkbox" hidden="hidden" id="box" onclick="reveal()">
+                        </label>
+
+
+
+                        {% if form.password.errors %}
+                        <div class="invalid-feedback">{{ form.password.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                    <img src="{% static 'images/view.png' %}" alt="">
+
+                    <button type="submit" class="btn btn-primary btn-block mb-3">Sign in</button>
+                </form>
+
+                <div class="text-center">
+                    <p>Not a member? <a href="{% url 'register' %}">Register</a></p>
+                    <p>Forgot Password <a href="{% url 'password_reset' %}">Click here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+function reveal() {
+    if (document.getElementById('box').checked) {
+        document.getElementById("id_password").type = 'text';
+    } else {
+        document.getElementById("id_password").type = 'password';
+    }
+}
+</script>
+{% endblock %}
+
+

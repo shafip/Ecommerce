@@ -1,0 +1,27 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+   <div style="border: 1px solid black; padding: 10px; margin: 20px auto 0 auto; width: 50%; text-align: center;">
+      <h1>Add Product</h1>
+      {% if messages %}
+         <ul class="messages">
+            {% for message in messages %}
+
+            {% endfor %}
+         </ul>
+      {% endif %}
+      <form method="post" >
+         {% csrf_token %}
+         {{ form.as_p }}
+         <br>
+         <div style="text-align: center;">
+            <input type="submit" class="btn btn-success">
+         </div>
+      </form>
+      <div id="result"></div>
+   </div>
+
+
+
+{% endblock %}

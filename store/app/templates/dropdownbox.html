@@ -1,0 +1,25 @@
+<form method="get">
+  {{ form.as_p }}
+  <button type="submit">Filter</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Image</th>
+      <th>Image 2</th>
+      <th>Image 3</th>
+      <th>Banner</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+    <tr>
+      <td>{{ product.product.name }}</td>
+      <td>{{ product.brand }}</td>
+      <td><img src="{{ product.product.image.url }}" alt="Image"></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

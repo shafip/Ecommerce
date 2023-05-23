@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 col-md-12">
+                <section id="pro-dt" class="pad">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="single-image"height="100%">
+                                <img src="{{ product.product.image.url }}" width="100%"  id="main-img" alt="">
+                            </div>
+                                <div class="small-image-grp mt-3">
+                                    <div class="small-image-col">
+                                        <img src="{{ product.product.image.url }}" width="100%" class="small-img"
+                                             alt="">
+                                    </div>
+                                    <div class="small-image-col">
+                                        <img src="{{ product.product.image3.url }}" width="100%" class="small-img"
+                                             alt="">
+                                    </div>
+                                    <div class="small-image-col">
+                                        <img src="{{ product.product.image2.url }}" width="100%" class="small-img"
+                                             alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                </section>
+            </div>
+
+            <div class="col-lg-2"></div>
+
+            <div class="col-lg-5 col-md-12">
+                <div class="single-pro-dt">
+                    <h6></h6>
+                    <h4>{{ product.product }}</h4>
+                    <h5>{{ product.brand }}</h5>
+                    <h2> Rs {{ product.price }}</h2>
+                    <span class="mt-2">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga repellat,
+                    voluptatibus rem quas esse pariatur, repellendus incidunt nisi architecto non odio unde aperiam,
+                    consequuntur odit tempore eaque maxime explicabo exercitationem?</span>
+
+
+                    <a href="{% url 'addtocarts' product.id %}"><button class="btn btn-primary mt-3">add to cart</button></a>
+                                    <a href="{% url 'direct_buy' product.id  %}"><button class="btn btn-success mt-3">Buy Now</button></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var mainimg=document.getElementById("main-img");
+        var smallimg=document.getElementsByClassName("small-img");
+        smallimg[0].onclick = function(){
+            mainimg.src = smallimg[0].src;
+        }
+        smallimg[1].onclick = function(){
+            mainimg.src = smallimg[1].src;
+        }
+        smallimg[2].onclick = function(){
+            mainimg.src = smallimg[2].src;
+        }
+    </script>
+
+    <script src="./script.js"></script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="row mt-5">
+  <div class="col-1"></div>
+  <div class="col-10">
+          <table class="table mr-5">
+        <thead>
+          <tr>
+
+            <th scope="col">User</th>
+            <th scope="col">Item</th>
+            <th scope="col">Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for cart in product %}
+            <td>{{cart.user}}</td>
+             <td>{{cart.products}}</td>
+             <td>{{cart.products.quantity}}</td>
+             <td>{{cart.}}</td>
+              </tr>
+
+
+      </tbody>
+    </table>
+      {%endfor%}
+      </div>
+  <div class="col-1"></div>
+
+</div>
+
+
+{% endblock content %}

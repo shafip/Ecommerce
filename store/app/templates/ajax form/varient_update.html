@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Update Varient #{{ my_instance.pk }}</h1>
+  <form id="update-varient-form" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(function() {
+      $('#update-varient-form').submit(function(event) {
+        event.preventDefault();
+        var form = $(this);
+        $.ajax({
+          url: form.attr('action'),
+          method: 'POST',
+          data: form.serialize(),
+          success: function(data) {
+        $('#table-container').html(data.table_html);
+    }, else {
+              alert('An error occurred while updating the Varient.');
+            }
+          },
+          error: function() {
+            alert('An error occurred while updating the Varient.');
+          }
+        });
+      });
+    });
+  </script>
+{% endblock %}

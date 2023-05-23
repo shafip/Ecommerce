@@ -1,0 +1,161 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .card-img-top {
+        width: 100px;
+    }
+</style>
+<div class="row mt-5">
+    <div class="col-0"></div>
+    <div class="col-10">
+        <table id="table-container" class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Brand</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">stock</th>
+                    <th colspan="5" scope="col" style="text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in product %}
+                <tr id="table-row-">
+                    <td class="field1">{{item.product}}</td>
+                    <td class="field2">{{item.quantity|floatformat:3}} Kg</td>
+                    <td class="field3">{{item.brand}}</td>
+                    <td class="field4">{{item.price}}</td>
+                    <td class="field4">{{item.stock}}</td>
+                   <td id="item-status {{item.id}}">
+    {% if item.is_active  %}
+        Enable
+    {% else %}
+        Disable
+    {% endif %}
+</td>
+                            <td><a href="{% url 'subproductupdate' item.id %}"><button scope="col" type="button" class="btn btn-warning btn-sm ">Edit</button></a></td>
+<td>
+
+
+</td>
+                    {% if item.is_active == False %}
+                    <td><a href="{% url 'variantenable' item.id %}"><button type="button"
+                                class="btn btn-info btn-sm">ENABLE</button></a></td>
+                    {% else %}
+                    <td> <button type="button" onclick="btnok('{{item.id}}')" class="btn btn-danger btn-sm">Disable</button></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-2">
+        <th><a href="{% url 'subproductadd' %}"><button scope="col"
+                    type="button" class="btn btn-success btn-sm ">Add Variant</button></a></th>
+    </div>
+</div>
+
+
+
+
+{% endblock content %}
+{% block scriptcontent %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script>
+function btnok(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then(function(e) {
+        if (e.value === true) {
+            data = {}
+            data['userid'] = id
+            $.ajax({
+                type: 'PUT',
+                url: '/vardisable/dis',
+                data: data,
+                success: function(response) {
+    console.log(response);
+        $('#item-status'+ id ).html('Disable');
+    Swal.fire({
+        icon: 'success',
+        showConfirmButton: true,
+        title: response.msg
+    });
+}
+            });
+        }
+    })
+}
+</script>
+
+<script>
+    $(document).ready(function() {
+    // Handle click event on the edit button
+    $(".edit-btn").click(function() {
+        var pk = $(this).data('pk'); // Get the primary key from the data-pk attribute
+        var url = "/subproduct_form/" + pk + "/"; // Construct the URL for the AJAX request
+
+        // Make a GET request to the subproduct_form view
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'html',
+            success: function(data) {
+                // Update the modal body with the retrieved form HTML
+                $(".modal-body").html(data);
+            },
+            error: function() {
+                // Handle error response
+                console.log('Failed to retrieve form data.');
+            }
+        });
+    });
+
+    // Handle click event on the save button
+    $(document).on('click', '#saveBtn', function() {
+        var form = $("#editForm"); // Get the form element
+        var url = form.attr('action'); // Get the URL for the form submission
+
+        // Make a POST request to the subproduct_form view with the form data
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: form.serialize(),
+            success: function(response) {
+                alert(5);
+                if (response.success) {
+                    alert(5);
+                    // Update the table row with the updated data
+                    var tableRow = $('#table-row-' + response.data.id);
+                    tableRow.find('.field1').text(response.data.product);
+                    tableRow.find('.field2').text(response.data.quantity);
+                    tableRow.find('.field3').text(response.data.brand);
+                    tableRow.find('.field4').text(response.data.price);
+                    // Show a success message
+                    $('#message').text(response.message).removeClass('error').addClass('success');
+                } else {
+                    // Show an error message
+                    $('#message').text(response.message).removeClass('success').addClass('error');
+                }
+            },
+            error: function() {
+                // Handle error response
+                console.log('Form submission failed.');
+            }
+        });
+    });
+});
+
+</script>
+
+{% endblock scriptcontent %}

@@ -1,0 +1,75 @@
+
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row mt-5">
+    <div class="col-4">
+
+           <h3>OrderId :  {{order.order_id}}</h3>
+
+         <td>
+             <h4>Shipping Address</h4>
+          <l1>Name : {{ order.shipping.name }}</l1>
+          <br>
+          <l1>Address :{{ order.shipping.address }}</l1>
+          <br>
+            <l1>Phone No :{{ order.shipping.phone }}</l1>
+            <br>
+            <l1>pin code : {{ order.shipping.pincode }}</l1>
+
+        </td>
+
+    </div>
+
+    <div class="col-6">
+
+
+
+        <table class="table mt:3;"  style="border-collapse: collapse; border: 1px solid black;">
+  <thead>
+    <tr>
+      <th scope="col" style="border: 1px solid black;">OrderiD</th>
+        <th scope="col" style="border: 1px solid black;">Product Name</th>
+        <th scope="col" style="border: 1px solid black;">Quantity</th>
+        <th scope="col" style="border: 1px solid black;">Price</th>
+        <th scope="col" style="border: 1px solid black;">total</th>
+
+
+
+    </tr>
+  </thead>
+
+  <tbody>
+   {% for item in products %}
+    <tr style="border: 1px solid black;">
+
+       <th scope="row" style="border: 1px solid black;">{{ forloop.counter }}</th>
+        <td style="border: 1px solid black;">{{ item.varient.product }}</td>
+
+         <td style="border: 1px solid black;">{{ item.quantity }}</td>
+        <td style="border: 1px solid black;">{{ item.varient.price }}</td>
+
+      <td style="border: 1px solid black;">{{ item.price }}</td>
+        {% if item.reason %}
+        <td>
+
+                    <a href="{% url 'order_cancel_approve' item.id %}" class="btn btn-danger btn-sm">Order Cancel</a>
+
+        </td>
+
+        {% else %}
+
+        {% endif %}
+
+    </tr>
+ {%endfor%}
+  </tbody>
+</table>
+
+    </div>
+    <div class="col-1"></div>
+</div>
+
+
+{% endblock%}

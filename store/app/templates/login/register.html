@@ -1,0 +1,48 @@
+<div class="row mt-5 justify-content-center">
+    <div class="col-8">
+        <h2>Add Product Varient </h2>
+        <form method="post" id="subproduct-form" enctype="multipart/form-data" class="my-4" style="width: 40%">
+            {% csrf_token %}
+            <div class="form-group bordered">
+                Product:
+                {{ forms.product|add_class:"form-control" }}
+            </div>
+            <div class="form-group bordered">
+                image:
+                {{ forms.image|add_class:"form-control" }}
+            </div>
+            <div class="form-group bordered">
+                image2:
+                {{ forms.image2|add_class:"form-control" }}
+            </div>
+            <div class="form-group bordered">
+                image3:
+                {{ forms.image3|add_class:"form-control" }}
+            </div>
+               <div class="form-group bordered">
+                banner:
+                {{ forms.banner|add_class:"form-control" }}
+            </div>
+
+            <div class="form-group bordered">
+                Quantity:
+                {{ forms.quantity|add_class:"form-control" }}
+            </div>
+            <div class="form-group bordered">
+                Brand :
+                {{ forms.brand|add_class:"form-control" }}
+            </div>
+            <div class="form-group bordered">
+                Price :
+                {{ forms.price|add_class:"form-control" }}
+            </div>
+            <div class="form-group bordered">
+                Stock :
+                {{ forms.stock|add_class:"form-control" }}
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" value="submit" class="btn btn-success">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>

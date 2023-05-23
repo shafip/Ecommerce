@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <script src="{% static 'js/sweet.js' %}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <style>
+        .icons{
+            width:30px;
+            }
+        .row-image{
+             height:50px
+             }
+        li
+        {
+        list-style: none;}
+        .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  margin: 0.125rem 0 0;
+  font-size: 1rem;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+    </style>
+
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-info">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'userproduct' %}">
+        <img class="icons " src="{% static 'images/1156660_ecommerce_logo_shopify_icon.png' %}">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+
+
+           <li class="nav-item">
+
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">                   </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link disabled"></a>
+        </li>
+      </ul>
+
+             <a href="{% url 'wish_detail' %}"><img class="icons " src="{% static 'images/wishlist.png' %}"></a>
+
+
+
+        <a href="{% url 'cart_detail' %}"><img class="icons " src="{% static 'images/bag.png' %}"></a>
+
+
+
+
+             <a href="{% url 'login' %}"class="btn btn-warning btn-sm"type="submit" class="header-links">Login</a>
+
+			 <br>
+
+    </div>
+  </div>
+</nav>
+ {% block content %}
+
+
+{% endblock content %}
+{% block scriptcontent %}
+
+
+{% endblock scriptcontent %}
+</body>
+</html>

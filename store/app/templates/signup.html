@@ -1,0 +1,174 @@
+{% extends 'mainhome.html' %}
+
+{% load static %}
+
+{% block content %}
+  <div class="container">
+    <h2>Sign up</h2>
+    {% if error %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{% endif %}
+    <form method="post" id="signup-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" placeholder="Enter your name" required>
+        <div class="invalid-feedback">Please enter your name</div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" placeholder="Enter your email address" required>
+        <div class="invalid-feedback">Please enter a valid email address</div>
+      </div>
+      <div class="form-group">
+        <label for="phone_number">Phone number:</label>
+        <input type="tel" name="phone_number" placeholder="Enter your phone number" value="+91" readonly required>
+
+        <br>
+        <input type="number" name="phone_number" id="phone_number" placeholder="Enter your phone number"  required>
+        <div class="invalid-feedback">Please enter a valid phone number</div>
+      </div>
+      <div class="form-group">
+        <label for="password1">Password:</label>
+        <input type="password" name="password1" id="password1" placeholder="Enter your password" required>
+        <div class="invalid-feedback">Please enter a password</div>
+      </div>
+      <div class="form-group">
+        <label for="password2">Confirm password:</label>
+        <input type="password" name="password2" id="password2" placeholder="Confirm your password" required>
+        <div class="invalid-feedback">Please confirm your password</div>
+      </div>
+      <button class="btn btn-success btn-lg" id="btn_ok" type="submit" style="width: 100%;">Sign up</button>
+        {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+    {% endif %}
+    </form>
+  </div>
+
+ <script>
+ // Define regular expressions for validation checks
+const nameRegex = /^[A-Za-z]{3,}\s?[A-Za-z]*$/;
+const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+const phoneRegex = /^[6789]\d{9}$/;
+const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+
+// Get the form element and form fields
+const form = document.getElementById("signup-form");
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const phoneInput = document.getElementById("phone_number");
+const password1Input = document.getElementById("password1");
+const password2Input = document.getElementById("password2");
+
+// Add event listeners to the form fields that listen for the "input" event and validate the input
+nameInput.addEventListener("input", function() {
+  if (!nameRegex.test(nameInput.value)) {
+    nameInput.setCustomValidity("Please enter a valid name");
+  } else {
+    nameInput.setCustomValidity("");
+  }
+});
+
+emailInput.addEventListener("input", function() {
+  if (!emailRegex.test(emailInput.value)) {
+    emailInput.setCustomValidity("Please enter a valid email");
+  } else {
+    emailInput.setCustomValidity("");
+  }
+});
+
+phoneInput.addEventListener("input", function() {
+  if (!phoneRegex.test(phoneInput.value)) {
+    phoneInput.setCustomValidity("Please enter a valid phone number");
+  } else {
+    phoneInput.setCustomValidity("");
+  }
+});
+
+password1Input.addEventListener("input", function() {
+  if (!passwordRegex.test(password1Input.value)) {
+    password1Input.setCustomValidity("Please enter a valid password");
+  } else {
+    password1Input.setCustomValidity("");
+  }
+});
+
+password2Input.addEventListener("input", function() {
+  if (password1Input.value !== password2Input.value) {
+    password2Input.setCustomValidity("Passwords do not match");
+  } else {
+    password2Input.setCustomValidity("");
+  }
+});
+
+// Add an event listener to the form that listens for the "submit" event
+form.addEventListener("submit", function(event) {
+  // Prevent the default behavior of the "submit" event
+  event.preventDefault();
+
+  // Check if the form is valid
+  if (form.checkValidity()) {
+    // Submit the form
+    form.submit();
+  }
+});
+
+</script>
+{% endblock %}
+
+{% block scriptcontent %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script>
+$(document).ready(function() {
+  $('#btn_ok').click(function() {
+    var email = $('#email').val();
+    var isValid = true;
+
+    if (isValid) {
+      $.ajax({
+        url: '/signupv/',
+        type: 'POST',
+        data: { email: email },
+        success: function(response) {
+          if (response.exists) {
+            Swal.fire({
+              position: 'center',
+              icon: 'warning',
+              title:  email +' Already registered!',
+              showConfirmButton: false,
+              timer: 1500
+            });
+            $('#email-error').text('Email already exists.');
+
+          } else {
+            $('#signup-form').submit();
+            window.location.replace('/login/user');
+          }
+        },
+        error: function() {
+          // Handle error if the request fails
+          // Display a general error message or perform any necessary action
+        }
+      });
+    }
+  });
+
+  $('#signup-form').submit(function(event) {
+    event.preventDefault();
+    // Handle form submission if needed or remove this event handler
+  });
+});
+</script>
+
+
+
+
+
+
+{% endblock scriptcontent %}

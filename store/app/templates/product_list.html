@@ -1,0 +1,14 @@
+{% extends 'login_user.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<form method="get" action="{% url 'product_list' %}">
+    {{ form.as_p }}
+    <button type="submit">Filter</button>
+</form>
+
+
+
+{% endblock %}

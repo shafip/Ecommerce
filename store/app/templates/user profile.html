@@ -1,0 +1,41 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row mt-5">
+    <div class="col-2"></div>
+    <div class="col-8">
+
+        <table class="table" style="border-collapse: collapse; border: 1px solid black;">
+  <thead>
+    <tr>
+      <th scope="col" style="border: 1px solid black;">UserID</th>
+
+      <th scope="col" style="border: 1px solid black;">Name</th>
+      <th scope="col" style="border: 1px solid black;">Email</th>
+      <th scope="col" style="border: 1px solid black;">Mobile Number</th>
+    </tr>
+  </thead>
+  <tbody>
+   {% for user in userss %}
+    <tr style="border: 1px solid black;">
+
+      <th scope="row" style="border: 1px solid black;">{{ forloop.counter|add:"+999" }}</th>
+
+      <td style="border: 1px solid black;">{{user.name}}</td>
+      <td style="border: 1px solid black;">{{user.email}}</td>
+      <td style="border: 1px solid black;">{{user.phone_number}}</td>
+
+
+
+    </tr>
+ {%endfor%}
+  </tbody>
+</table>
+
+    </div>
+    <div class="col-2"></div>
+</div>
+
+
+{% endblock%}

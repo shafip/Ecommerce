@@ -1,0 +1,34 @@
+{% extends 'login_user.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row mb-3 mt-3 justify-content-center">
+  <h2 class="text-center">Wishlist</h2>
+</div>
+
+<div class="row justify-content-center">
+  {% for wish in wishlist_items %}
+  <div class="card mb-3 mx-2" style="max-width: 18rem;">
+    <a href="{% url 'productdetail' wish.varient.id %}">
+      <img src="{{ wish.varient.image.url }}" class="card-img-top p-2" alt="...">
+    </a>
+    <div class="card-body">
+      <h5 class="card-title">{{ wish.varient.product.name }}</h5>
+      <p class="card-text">MRP : {{ wish.varient.price }}</p>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item d-flex justify-content-center">
+        <a href="{% url 'wish-tocart' wish.varient.id %}" class="btn btn-primary w-100" type="button">Add to Cart</a>
+      </li>
+      <li class="list-group-item d-flex justify-content-center">
+       <form action="{% url 'wish-delete' wish.pk %}" method="post">
+  {% csrf_token %}
+  <button class="btn btn-outline-danger w-100" type="submit">Remove Item</button>
+</form>
+      </li>
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock content %}

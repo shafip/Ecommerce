@@ -1,0 +1,214 @@
+{% extends 'mainhome.html' %}
+
+{% load static %}
+{% load widget_tweaks %} <!-- Load the widget_tweaks tag library -->
+<style>
+    #eye-icon {
+        position: absolute; /* Set position to absolute */
+        top: 50%; /* Position vertically in the middle */
+        right: 10px; /* Position 10px from the right */
+        transform: translateY(-50%); /* Vertically center the icon */
+        width: 20px; /* Adjust width as needed */
+        height: 20px; /* Adjust height as needed */
+        cursor: pointer; /* Add cursor pointer for interaction */
+    }
+
+    /* Set width to 40% and center align */
+    .form-container {
+        width: 40%;
+        margin: 0 auto;
+    }
+
+    /* Set position to relative for the parent div */
+    .form-outline {
+        position: relative;
+    }
+</style>
+{% block content %}
+<div class="form-container">
+    <h1>Login</h1>
+    {% if error_msg %}
+    <div class="alert alert-danger">{{ error_msg }}</div>
+    {% endif %}
+    <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+
+    <div class="form-outline mb-4">
+        <label class="form-label" for="email-input">Email address</label>
+        <input type="email" id="email-input" name="email" required class="form-control" />
+        <span id="email-error" style="display: none;"></span>
+    </div>
+
+    <div class="form-outline mb-4">
+        <label class="form-label" for="id_password">Password</label>
+        <input type="password" id="id_password" name="password" class="form-control" />
+        <span id="password-error" style="display: none;"></span>
+        <label for="box" class="eye-icon">
+            <img src="{% static 'images/view.png' %}" id="eye-icon" onclick="reveal()">
+            <input type="checkbox" hidden="hidden" id="box">
+        </label>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <!-- Checkbox -->
+        </div>
+        <div class="col">
+            <a href="{% url 'password_reset' %}">Forgot password?</a>
+        </div>
+    </div>
+
+    <button type="button" id="btn1" value="login" class="btn btn-primary btn-block mb-4">Sign in</button>
+
+    <div class="text-center">
+        <p>Not a member? <a href="{% url 'signup' %}">Register</a></p>
+    </div>
+
+    {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+    {% endif %}
+</form>
+</div>
+<script type="text/javascript">
+    function reveal() {
+        if (document.getElementById('box').checked) {
+            document.getElementById("id_password").type = 'text';
+        } else {
+            document.getElementById("id_password").type = 'password';
+        }
+    }
+</script>
+<!--<script>-->
+<!--// Get the email input element-->
+<!--const emailInput = document.getElementById("email-input");-->
+
+<!--// Add an event listener to the input element-->
+<!--emailInput.addEventListener("blur", function() {-->
+<!--  // Get the value of the input field-->
+<!--  const email = emailInput.value;-->
+
+<!--  // Define a regular expression to validate the email format-->
+<!--  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;-->
+
+<!--  // Perform the validation-->
+<!--  if (!emailRegex.test(email)) {-->
+<!--    // Display an error message and add a class to the input field to highlight it-->
+<!--    emailInput.classList.add("is-invalid");-->
+<!--    const errorText = "Please enter a valid email address.";-->
+<!--    if (emailInput.nextElementSibling !== null) {-->
+<!--        emailInput.nextElementSibling.textContent = errorText;-->
+<!--    }-->
+<!--  } else {-->
+<!--    // Remove any existing error message and class from the input field-->
+<!--    emailInput.classList.remove("is-invalid");-->
+<!--    if (emailInput.nextElementSibling !== null) {-->
+<!--        emailInput.nextElementSibling.textContent = "";-->
+<!--    }-->
+<!--  }-->
+<!--});-->
+
+<!--</script>-->
+
+<!--<script>-->
+<!--    $(document).ready(() => {-->
+<!--        $('#btn1').click(() => {-->
+<!--            var email = $('#email-input').val();-->
+<!--            var password = $('#id_password').val();-->
+
+<!--            var data = {-->
+<!--                'csrfmiddleware_token': $('input[name=csrfmiddlewaretoken]').val(),-->
+<!--                'email': email,-->
+<!--                'password': password-->
+<!--            };-->
+
+<!--            if (email === '') {-->
+<!--                alert("Email is required");-->
+<!--            } else if (password === '') {-->
+<!--                alert("Password is required");-->
+<!--            } else {-->
+<!--                $.ajax({-->
+<!--                    url: 'login/',-->
+<!--                    method: 'POST',-->
+<!--                    data: data,-->
+<!--                    dataType: 'json',-->
+<!--                    success: function(data) {-->
+<!--                        if (data.success) {-->
+<!--                            alert("User logged in");-->
+<!--                            window.location.replace('login/accounts/dashboard/');-->
+<!--                        } else {-->
+<!--                            alert("Invalid credentials");-->
+<!--                        }-->
+<!--                    }-->
+<!--                });-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+
+
+{% endblock %}
+
+{% block scriptcontent %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+<script>
+    $(document).ready(() => {
+        $('#btn1').click(() => {
+            var email = $('#email-input').val();
+            var password = $('#id_password').val();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            var data = {
+                'csrfmiddleware_token': $('input[name=csrfmiddlewaretoken]').val(),
+                'email': email,
+                'password': password
+            };
+
+            if (!emailRegex.test(email)) {
+                $('#email-input').get(0).setCustomValidity("Please enter a valid email");
+                $('#email-error').text("Please enter a valid email").show();
+            } else if (password === '') {
+                $('#password-error').text("Password is required").show();
+            } else {
+                $('#email-error, #password-error').hide();
+                $.ajax({
+                    url: '/login/',
+                    method: 'POST',
+                    data: data,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.success) {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'success',
+                                title: 'Success !!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            if (data.redirect) {
+                                window.location.replace(data.redirect);
+                            } else {
+                                window.location.replace('accounts/dashboard/');
+                            }
+                        } else {
+                            Swal.fire({
+                                position: 'center',
+                                icon: 'warning',
+                                title: 'Failed !!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+
+
+
+{% endblock scriptcontent %}

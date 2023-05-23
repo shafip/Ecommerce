@@ -1,0 +1,47 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="row mt-5">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <table class="table" style="border-collapse: collapse; border: 1px solid black;">
+                <thead>
+                    <tr>
+                        <th scope="col" style="border: 1px solid black;">OrderId</th>
+                        <th scope="col" style="border: 1px solid black;">Date</th>
+                        <th scope="col" style="border: 1px solid black;">Name</th>
+                        <th scope="col" style="border: 1px solid black;">User Email</th>
+                        <th scope="col" style="border: 1px solid black;">Items</th>
+                        <th scope="col" style="border: 1px solid black;">Total</th>
+                        <th scope="col" style="border: 1px solid black;">Status</th>
+                        <th scope="col" style="border: 1px solid black;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+              {% for order in order %}
+    <tr style="border: 1px solid black;">
+        <th scope="row" style="border: 1px solid black;">{{ order.order_id }}</th>
+        <td style="border: 1px solid black;">{{ order.date }}</td>
+        <td style="border: 1px solid black;">{{ order.user.name }}</td>
+        <td style="border: 1px solid black;">{{ order.user.email }}</td>
+        <td style="border: 1px solid black;">{{ order.items }}</td>
+        <td style="border: 1px solid black;">{{ order.total_amount }}</td>
+        <td style="border: 1px solid black;">{{ order.status }}</td>
+        <td>
+            <a href="{% url 'order_detail' order.id %}" class="btn btn-success btn-sm">View Details</a>
+        </td>
+        <td>
+
+            <a href="{% url 'change_order_status' order.pk %}" class="btn btn-warning btn-sm">Change Status</a>
+        </td>
+
+    </tr>
+{% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-2"></div>
+    </div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'login_user.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row mt-5">
+  <div class="col-3"></div>
+  <div class="col-6">
+      <h3>Order Success!</h3>
+    <div class="col-lg-6">
+        <div class="box-element">
+				<a class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190;</a>
+			{% if order %}
+			<h5>Items:{{ total_items }}</h5>
+			<h5>Total:RS {{ total_amount }}</h5>
+				<hr>
+				<h3>Order Summary</h3>
+
+				<hr>
+			{% endif %}
+			{% for last_order_item in products  %}
+				<div class="cart-row">
+					<h6>{{last_order_item.orderid}}</h6>
+					<div style="flex:2"><img class="row-image" src="{{ last_order_item.varient.image.url }}"></div>
+					<div style="flex:2"><p>{{ last_order_item.varient.product.name }}</p></div>
+					<div style="flex:1"><p>  {{ last_order_item.quantity }} x </p></div>
+					<div style="flex:1"><p>RS {{ last_order_item.varient.price|floatformat:2 }}</p></div>
+
+
+				</div>
+			{% endfor %}
+
+		</div>
+	</div>
+  </div>
+  <div class="col-3"></div>
+</div>
+{% endblock content %}

@@ -1,0 +1,221 @@
+{% extends 'login_user.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box-element">
+            <a class="btn btn-outline-dark" href="{% url 'login_user' %}">&#x2190; continue shopping</a>
+            <br>
+            <br>
+            <table class="table">
+                <tr>
+                    <th><h5>items: <strong>{{total_quantity}}</strong></h5></th>
+                    <th id="#cart-total"><h5>total: RS {{total}}<strong></strong></h5></th>
+                    {% if cart_items %}
+                    <th>
+                        <a style="float:right;margin:5px;" class="btn btn-outline-success btn-sm" href="{% url 'check_out' %}">checkout</a>
+                    </th>
+                    {% else %}
+
+                    {% endif %}
+
+                </tr>
+            </table>
+        </div>
+        <br>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mx-auto" role="alert" style="width: 25%;">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+
+
+ <div class="container my-5">
+      <div class="row">
+        <div class="col-lg-12">
+{% if is_empty %}
+                        <h1 align="center">Your cart is empty !!!</h1>
+                    {% else %}
+<table class="table custom-table table-white">
+
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Name</th>
+                <th scope="col">Brand</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Total</th>
+                  <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            {% for cart in cart_items %}
+              <tr id="product-{{cart.pk}}">
+
+                <td><a href="{% url 'productdetail' cart.varient.id %}"><img class="row-image" src="{{cart.varient.image.url}}" alt=""></a></td>
+                <td>{{cart.varient.product.name}} ({{cart.varient.quantity}} kg)</td>
+                <td>{{cart.varient.brand}}</td>
+                <td>Rs : {{cart.varient.price}}</td>
+                <td>{{ cart.quantity }}
+<!--                    <p id="quantity-{{ cart.pk }}" class="quantity">{{ cart.quantity }}</p>-->
+                <a href="{% url 'cart_update' cart.id 'increment' %}" class="update-cart" data-product-id="{{ cart.id }}"><img class="chg-quantity" src="{% static 'images/arrow-up.png' %}"></a>
+                <a href="{% url 'cart_update' cart.id 'decrement' %}" class="update-cart" data-product-id="{{ cart.id }}"><img class="chg-quantity" src="{% static 'images/arrow-down.png' %}"></a>
+<!--                  <button class="btn btn-outline-secondary btn-sm cart-action" data-pk="{{ cart.id }}" data-action="increment">+</button>-->
+<!--<button class="btn btn-outline-secondary btn-sm cart-action" data-pk="{{ cart.id }}" data-action="decrement">-</button>-->
+                </td>
+                  <td>RS : {{cart.get_total}}</td>
+                  <td>
+                       <button class="delete-cart-item" data-pk="{{ cart.pk }}">Delete</button>
+        &nbsp
+        <button class="btn btn-success btn-sm ajax-add-to-wishlist" data-product-id="{{ cart.varient.id }}">Wishlist</button>
+                  </td>
+              </tr>
+{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+ </div>
+
+
+
+
+
+
+
+
+                    {% endif %}
+
+        </div>
+
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+
+
+
+    </div>
+</div>
+
+{% endblock content %}
+{% block scriptcontent %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+<script>
+    // Attach click event handlers to the increment and decrement buttons
+    $(document).on('click', '.cart-action', function(){
+        var pk = $(this).data('pk');  // Get the 'pk' from the data attribute
+        var action = $(this).data('action');  // Get the 'action' from the data attribute
+
+        // Call the updateCart function with the 'pk' and 'action' parameters
+        updateCart(pk, action);
+    });
+
+    function updateCart(pk, action) {
+        // Make an AJAX call to the cart_updates view
+        $.ajax({
+            url: '/productcart/updates/' + pk + '/' + action + '/',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log('test');
+                console.log(data)
+                // Update the quantity value of the corresponding <p> element
+                $('#product-'+data['pk']).empty()
+                $('#product-'+data['pk']).append(data.html);
+            }
+        });
+    }
+</script>
+<script>
+  $(document).ready(function() {
+    $('.ajax-add-to-wishlist').click(function(event) {
+      event.preventDefault();
+
+      var product_id = $(this).data('product-id');
+      var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+
+      $.ajax({
+        url: '/cart_to_wish/' + product_id + '/',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+          csrfmiddlewaretoken: csrf_token,
+          product_id: product_id
+        },
+        success: function(data) {
+          if (data.success) {
+            $('#product-' + product_id).remove();
+          }
+
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Move To WishList',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        },
+        error: function(xhr, errmsg, err) {
+          $('#product-' + product_id).remove();
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Move To WishList',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          location.reload()
+        }
+      });
+    });
+  });
+</script>
+
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">  <!-- Include the CSRF token in a hidden input field -->
+
+
+<script>
+$(document).on('click', '.delete-cart-item', function() {
+    var pk = $(this).data('pk');
+    $.ajax({
+        type: 'POST',
+        url: '/cart/delete/' + pk + '/',
+        data: {
+            'pk': pk,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response) {
+            console.log(pk); // Log the response data to the console
+            if (response.success) {
+                // Remove the deleted item from the cart
+                $('#product-' + pk).remove();
+                // Show a success message
+                alert(response.message);
+            } else {
+                $('#product-' + pk).remove();
+                // Show an error message
+
+            }
+        },
+        error: function(xhr, status, error) {
+            // Show an error message
+            alert('An error occurred while deleting the product.');
+        }
+    });
+});
+</script>
+
+
+{% endblock scriptcontent %}

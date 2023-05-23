@@ -1,0 +1,26 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+
+{% if reason %}
+<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label">Reason</label>
+ <input value="{{ reason.reason }}" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" type="text" readonly>
+
+</div>
+<div class="mb-3">
+  <label for="exampleFormControlTextarea1" class="form-label">Messages</label>
+  <textarea readonly class="form-control" id="exampleFormControlTextarea1" rows="3">{{ reason.messages }}</textarea>
+</div>
+
+<a href="{% url 'order_cancel_approve_updation' reason.id 'approved' %}">
+  <button type="button" class="btn btn-success btn-sm">Approved</button>
+</a>
+<a href="{% url 'order_cancel_approve_updation' reason.id 'reject' %}">
+  <button type="button" class="btn btn-info btn-sm">Reject</button>
+</a>
+{% endif %}
+
+
+{% endblock%}

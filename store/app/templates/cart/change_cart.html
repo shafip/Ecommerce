@@ -1,0 +1,52 @@
+{% load static %}
+
+<table class="table custom-table table-light">
+  <thead>
+    <tr>
+      <th scope="col">Item</th>
+      <th scope="col">Name</th>
+      <th scope="col">Brand</th>
+      <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Total</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cart in item %}
+    <tr id="product-{{cart.pk}}">
+      <td><a href="{% url 'productdetail' cart.varient.id %}"><img class="row-image" src="{{cart.varient.product.image.url}}" alt=""></a></td>
+      <td>{{cart.varient.product.name}} ({{cart.varient.quantity}} kg)</td>
+      <td>{{cart.varient.brand}}</td>
+      <td>Rs : {{cart.varient.price}}</td>
+      <td>
+        {{ cart.quantity }}
+        <a href="{% url 'cart_update' cart.id 'increment' %}" class="update-cart" data-product-id="{{ cart.id }}"><img class="chg-quantity" src="{% static 'images/arrow-up.png' %}"></a>
+        <a href="{% url 'cart_update' cart.id 'decrement' %}" class="update-cart" data-product-id="{{ cart.id }}"><img class="chg-quantity" src="{% static 'images/arrow-down.png' %}"></a>
+        <button class="btn btn-outline-secondary btn-sm cart-action" data-pk="{{ cart.id }}" data-action="increment">+</button>
+        <button class="btn btn-outline-secondary btn-sm cart-action" data-pk="{{ cart.id }}" data-action="decrement">-</button>
+      </td>
+      <td>RS : {{cart.get_total}}</td>
+      <td>
+        <button class="btn btn-danger btn-sm delete-product" data-product-id="{{ cart.id }}">Delete</button>
+        &nbsp
+        <button class="btn btn-success btn-sm ajax-add-to-wishlist" data-product-id="{{ cart.varient.id }}">Wishlist</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,49 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+  .cart-image{
+    width:100px;
+    }
+
+</style>
+
+<div class="row mt-5">
+  <div class="col-1"></div>
+  <div class="col-10">
+          <table class="table mr-5">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Item</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Quantity</th>
+              <th scope="col">Unit Price</th>
+            <th scope="col">Price</th>
+          </tr>
+        </thead>
+
+        <tbody>
+                {% for cart in product %}
+                <td>{{cart.cart.name}}</td>
+            <td>{{cart.cart}}</td>
+             <td><img class="cart-image" src="{{cart.varient.product.image.url}}" alt=""></td>
+            <td>{{cart.varient.product.name}}</td>
+             <td>{{cart.quantity}}</td>
+            <td>{{cart.varient.price}}</td>
+            <td>{{cart.price}}</td>
+              </tr>
+
+ {% endfor %}
+      </tbody>
+    </table>
+
+      </div>
+  <div class="col-1"></div>
+
+</div>
+
+
+{% endblock content %}
